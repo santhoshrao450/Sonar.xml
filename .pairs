@@ -1,0 +1,28 @@
+pairs:
+  bk: Brian Kelly; bkelly
+  eg: Edgar Gonzalez; egonzalez
+  am: Adnan Mama
+  pk: Prashant Kubsad
+  hd: Himanshu Dobhal
+  lj: Linda Joy
+  em: Eduardo Mujica
+  jl: Josh Long; jlong
+  sk: Selva Kadalarasan
+  pb: Phani Burra
+  aj: Alexander Johnson
+  bw: Brett Wallis
+  ma: Manju Akkiangady
+  gh: Grant Hutchins; ghutchins
+  mb: Mike Bingaman
+  gv: Gretel Vargas
+  kg: Kelly Gerritz; kgerritz
+  ar: Alexis Rondeau; arondeau
+  mm: Mike Mcdearmon; mmcdearmon
+  tb: Tim Butterworth; tbutterworth
+  vs: Vanessa Sant'Anna; vsantanna
+  zg: Zoe Gagnon; zgagnon
+  mob: Mob Programming
+
+email:
+  prefix: pair
+  domain: pivotal.io
