@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<project name="jacoco" default="JaCoCo" basedir="" xmlns:jacoco="antlib:org.jacoco.ant">
+
+	<property name="name" value="" />
+
+	<!--<property name="librarypath" value="C:/lib" />
+	<property name="ug-security-lib" value="C:/lib" />
+	<property name="source" value=".\" />
+	<property name="compiled" value="jacoco-compiled" />
+	<property name="destination" value="destination" />
+	<property name="report_dir" value="${destination}/junitreport" />
+	<property name="result.exec.file" location="C:/miguide/jacoco.exec" />-->
+
+	<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+		<classpath path="${librarypath}/jacocoant.jar" />
+	</taskdef>
+
+	<path id="classpath">
+		<filelist dir="${librarypath}" files="hamcrest-core-1.3.jar,
+										hamcrest-library-1.3.jar,
+										mockito-all-1.9.5.jar,
+										jacocoant.jar,
+										junit-4.12.jar,
+										com.ibm.ws.prereq.soap.jar,
+								  		ugsecurity.jar,
+								  		j2ee.jar,
+								  		ugcommonutilities.jar,
+								  		netscape.jar,
+								  		ugcorp.zip,
+								  		logging.jar,
+								  		microsoftsecurity.zip,
+								  		campaign.jar,
+								  		com.ibm.ws.webcontainer.jar,
+								  		lcrlloan.jar,
+								  		ugcommonloanobject.jar,
+								  		eventlogging.jar,
+								  		utilconverters.jar,
+								  		ugbusdomains.jar,
+								  		bus-service-dufileupload.jar,
+										DUFileBusinessProcessWSClient.jar,
+										RequestInformationDataSvcWSClient.jar,
+										quartz-1.5.2.jar,
+										spring-context-3.2.1.RELEASE.jar,
+										spring-context-support-3.2.1.RELEASE.jar,
+										spring-core-3.2.1.RELEASE.jar,
+										spring-web-3.2.1.RELEASE.jar,
+										spring-beans-3.2.1.RELEASE.jar"/>
+										
+		<filelist dir="${ug-security-lib}" files="UGDecryptUtil.jar,UGSecurityV2.0.jar"/>
+		<!--<fileset dir="${source}" includes="**/lib/*.jar" />
+		<fileset dir="${librarypath}" includes="*.jar,*.zip"/>
+		<fileset dir="${ug-security-lib}" includes="*.jar,*.zip" />-->
+	</path>
+	
+	<target name="prepare">
+		<tstamp />
+		<delete dir="${compiled}" />
+		<mkdir dir="${compiled}" />
+		<delete dir="${destination}" />
+		<mkdir dir="${destination}" />
+		<delete dir="${report_dir}" />
+		<mkdir dir="${report_dir}" />
+	</target>
+
+
+	<target name="compile_test" depends="prepare">
+		<javac target="1.6" source="1.6" srcdir="${source}" destdir="${compiled}" debug="on">
+			<classpath refid="classpath" />
+		</javac>
+	</target>
+
+	<target name="JaCoCo" depends="compile_test">
+		<jacoco:coverage destfile="${result.exec.file}">
+			<junit printsummary="yes" haltonfailure="no" fork="yes" forkmode="once" maxmemory="512m" failureproperty="tests.failed" filtertrace="on">
+				<classpath>
+					<path refid="classpath" />
+					<path location="${compiled}" />
+				</classpath>
+
+				<formatter type="xml" />
+				<batchtest fork="true" todir="${report_dir}">
+					<fileset dir="${compiled}" includes="**/unit/**, **/integration/**, **/*Test.class" excludes="**/*$*.class, **/ConnectionTest.class, **/SessionTest.class" />
+				</batchtest>
+			</junit>
+		</jacoco:coverage>
+		<jacoco:report>
+			<!-- This task needs the collected execution data and ... -->
+			<executiondata>
+				<file file="${result.exec.file}" />
+			</executiondata>
+			<!-- the class files and optional source files ... -->
+			<structure name="JaCoCo Test">
+				<group name="${name}">
+					<classfiles>
+						<fileset dir="${compiled}" excludes="**/*Test* , **/BaseUnit*"  />
+					</classfiles>
+					<sourcefiles encoding="UTF-8">
+						<fileset dir="${source}" />
+					</sourcefiles>
+				</group>
+			</structure>
+			<!-- to produce reports in different formats. -->
+			<html destdir="${report_dir}" />
+		</jacoco:report>
+		<fail message="Test failure detected, check test results." if="tests.failed" />
+	</target>
+
+</project>
