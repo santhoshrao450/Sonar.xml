@@ -1,0 +1,7 @@
+#!/bin/bash
+JAVA_HOME="/usr/java8_64/jre/"
+/was/app/ant-1.8.2/bin/ant -f $WORKSPACE/sonar.xml -Dsonar.projectKey=$PROJECT_NAME -Dsonar.projectName=$PROJECT_NAME \
+-Dlibrarypath=$BUILD_HOME/lib -Dsource=$WORKSPACE -Dsonar.surefire.reportsPath=$WORKSPACE/.sonar/surefire-reports \
+-Dsonar.java.coveragePlugin=jacoco -Dsonar.dynamicAnalysis=reuseReports \
+-Dsonar.jacoco.reportPath=$WORKSPACE/build/surefire-reports/jacoco.exec -Dsonar.java.binaries=$WORKSPACE/jacoco-compiled \
+-Dsonar.projectVersion=$BUILD_NUMBER sonar
