@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<project name="SonarQube" default="" basedir="." xmlns:sonar="antlib:org.sonar.ant">
+
+	<property name="version" value=""/>
+
+	<!--define the SonarQube global properies-->
+	<property name="sonar.host.url" value="http://admjkn601.ugcorp.com:9000/"/>
+	<property name="sonar.jdbc.url" value="jdbc:oracle:thin:@(DESCRIPTION=(LOAD_BALANCE=on) (FAILOVER = on ) (ADDRESS = (PROTOCOL = TCP)(HOST = insdbbld1-vip.ugcorp.com)(PORT = 1521)) (ADDRESS = (PROTOCOL = TCP)(HOST = insdbbld2-vip.ugcorp.com)(PORT = 1521)) (CONNECT_DATA=(SERVICE_NAME=SONARQUBE)(SERVER=DEDICATED)))"></property>
+
+	<!-- Define the SonarQube project properties -->
+	<property name="sonar.projectKey" value="${sonar.projectKey}"/>
+	<property name="sonar.projectName" value="${sonar.projectName}"/>
+	<property name="sonar.projectVersion" value="${version}"/>
+	<property name="sonar.sources" value="${source}"/>
+	<property name="sonar.java.binaries" value="${compiled_source}"/>
+	<property name="sonar.exclusions" value="**/unit/**, **/integration/**" />
+	
+	<!-- Define the SonarQube target-->
+	<target name="sonar">
+		<taskdef uri="antlib:org.sonar.ant" resource="org/sonar/ant/antlib.xml">
+			<!-- Update the following line, or put the "sonarqube-ant-task-*.jar" file in your "$HOME/.ant/lib" folder -->
+			<classpath path="/was/app/ant-1.8.2/lib/sonarqube-ant-task-2.5.jar"/>
+		</taskdef>
+	<!-- Execute the SonarQube analysis -->
+		<sonar:sonar/>
+	</target>
+</project>
