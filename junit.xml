@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<project name="AHPJunit" default="JaCoCo" basedir="." xmlns:jacoco="antlib:org.jacoco.ant">
+
+	<!--define properties for later use-->
+	<property name="pathseparator" value=";" />
+	<property name="source" value="..\"/>
+	<property file="credentials.properties"/>
+	
+	<!--
+	<property name="junit.report.dir" value="JUnit_Report" />
+	<property name="codecoverage.report.dir" value="JUnit_Report" />
+	<property name="appName" value="Test project" />
+	<property name="jacoco.lib" value="C:/Users/burrap/Desktop/cvs2svn/" />
+	<property name="result.exec.file" location="C:/Users/burrap/Desktop/cvs2svn/jacoco.exec" />-->
+
+
+	<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+		<classpath path="${jacoco.lib}/jacocoant.jar" />
+	</taskdef>
+
+	<target name="prepare">
+		<delete dir="${junit.report.dir}" />
+		<mkdir dir="${junit.report.dir}" />
+		<delete dir="${codecoverage.report.dir}" />
+		<mkdir dir="${codecoverage.report.dir}" />
+	</target>
+
+	<path id="classpath">
+		<fileset dir="${build}" includes="*.jar" />
+		<fileset dir="${source}" includes="**/lib/*.jar" />
+		<fileset dir="${jacoco.lib}" includes="**/*.jar" />
+		<!--<fileset dir="${sharedlibrary}" includes="**/*.jar" />-->
+		<!--<fileset dir="${compiled}" includes="**/*.class" />-->
+	</path>
+ 
+	<!-- Compile test classes -->
+	<target name="compile_test" depends="prepare">
+		<echo>SHARED LIB PATH :${sharedlibrary}</echo>
+		<echo>jacocolib :${jacoco.lib}</echo>
+		<javac includeantruntime="false" srcdir="${source}" destdir="${compiled}" debug="on" includes="**/test/**">
+			<classpath>
+				<path refid="classpath" />
+			</classpath>
+		</javac>
+	</target>
+
+	<!-- Run Code Coverage Test Cases -->
+	<target name="JaCoCo" depends="compile_test">
+		<echo>Inside JaCoCo Target:</echo>
+
+		<jacoco:coverage destfile="${result.exec.file}">
+			<junit printsummary="yes" haltonfailure="no" fork="yes" forkmode="once" maxmemory="512m" failureproperty="tests.failed" filtertrace="on">
+			<jvmarg value="-Ddb.db2.username=${db.db2.username}"/>
+				<jvmarg value="-Ddb.db2.password=${db.db2.password}"/>
+				<jvmarg value="-Ddb.oracle.username=${db.oracle.username}"/>
+				<jvmarg value="-Ddb.oracle.password=${db.oracle.password}"/>
+				<jvmarg value="-Ddb.resiliency.username=${db.resiliency.username}"/>
+				<jvmarg value="-Ddb.resiliency.password=${db.resiliency.password}"/>
+				<jvmarg value="-Ddb.sqlserver.username=${db.sqlserver.username}"/>
+				<jvmarg value="-Ddb.sqlserver.password=${db.sqlserver.password}"/>
+				<jvmarg value="-Dbuild.path=${build.path}" />
+					<classpath>
+						<path refid="classpath" />
+						<path location="${compiled}" />
+						<!--path location="${sharedlibrary}" />-->
+					</classpath>
+				<formatter type="xml" />
+				<batchtest fork="true" todir="${junit.report.dir}">
+					<fileset dir="${compiled}" includes="**/*Test*" excludes="**/*$*.class"/>
+				</batchtest>
+			</junit>
+		</jacoco:coverage>
+
+		<!--<junitreport todir="${junit.report.dir}">
+			<fileset dir="${junit.report.dir}" includes="TEST-*.xml" />
+			<report todir="${junit.report.dir}" />
+		</junitreport>-->
+		
+		<!-- Step 3: Create coverage report -->
+		<jacoco:report>
+			<!-- This task needs the collected execution data and ... -->
+			<executiondata>
+				<file file="${result.exec.file}" />
+			</executiondata>
+			<!-- the class files and optional source files ... -->
+			<structure name="JaCoCo Test">
+				<group name="${appName}">
+					<classfiles>
+						<fileset dir="${compiled}" includes="**/*Test*"/>												
+							<!--include name="**/*Test*"/>
+						</fileset>-->								
+					</classfiles>
+					<sourcefiles encoding="UTF-8">
+						<fileset dir="${source}" />
+					</sourcefiles>
+				</group>
+			</structure>  
+			<!-- to produce reports in different formats. -->
+			<html destdir="${codecoverage.report.dir}/report.html" />
+			<check>				
+				<rule element="BUNDLE" >
+					<limit counter="INSTRUCTION" value="COVEREDRATIO" minimum="0.05" />
+					<limit counter="BRANCH" value="COVEREDRATIO" minimum="0.05" />					
+					<!--<limit counter="CLASS" value="MISSEDCOUNT" maximum="2"/>-->					
+				</rule>
+				</check>
+		</jacoco:report>
+		
+		<fail message="Test failure detected, check test results." if="tests.failed" />
+	</target>
+</project>
