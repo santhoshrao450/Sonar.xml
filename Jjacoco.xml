@@ -1,0 +1,11 @@
+name=$PROJECT_NAME
+build=$WORKSPACE/build
+source=$WORKSPACE
+compiled=$WORKSPACE/jacoco-compiled
+destination=$WORKSPACE/destination
+librarypath=$BUILD_HOME/lib
+report_dir=$WORKSPACE/build/surefire-reports
+result.exec.file=$WORKSPACE/build/surefire-reports/jacoco.exec
+lib_stage=$WORKSPACE/lib_stage
+ug-security-lib=/was/app/EnterpriseApps/SharedLibs/ug-security-lib
+spring-3.2.1-lib=/was/app/EnterpriseApps/SharedLibs/spring-3.2.1-lib
